@@ -20,15 +20,24 @@ const Framer: Component<ParentProps> = props => {
         return iframe;
     };
 
+    // This controls if a nav to about:blank is done before removing the frame
+    // The playwright tests seem to fail with or without the about:blank navigation.
+    let usenavtoremove = false;
+
     const removeFrame = (frame: HTMLIFrameElement) => {
         if (frame.parentNode) {
-            frame.addEventListener("load", (ev) => {
-                const frame = ev.target as HTMLIFrameElement;
+            if (usenavtoremove) {
+                frame.addEventListener("load", (ev) => {
+                    const frame2 = ev.target as HTMLIFrameElement;
+                    frame2.parentNode?.removeChild(frame2);
+                    // console.log('frame removed from DOM');
+                    timer = setTimeout(dowork, timeout);
+                }, true);
+                frame.contentWindow?.location.replace("about:blank");
+            } else {
                 frame.parentNode?.removeChild(frame);
-                // console.log('frame removed from DOM');
                 timer = setTimeout(dowork, timeout);
-            }, true);
-            frame.contentWindow?.location.replace("about:blank");
+            }
         }
     }
 
