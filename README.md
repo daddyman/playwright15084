@@ -18,6 +18,13 @@ npm install
 npm start
 ```
 
+To run the web site without the hot reloading checks
+
+```(sh)
+npm run build
+npm run serve -- --port 3000
+```
+
 ## Run the tests
 
 ```(sh)
